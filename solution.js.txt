@@ -1,0 +1,49 @@
+const fs = require('fs');
+const FILE_PATH = './data.json';
+
+/**
+ * Finds and returns duplicate URLs based on a specified key from an array of objects.
+ * 
+ * @param {String} key - The object key to search for duplicates.
+ * @param {Array} data - Array of objects containing the URLs and other data.
+ * @return {Array} An array of URLs that have duplicates in the data set.
+ */
+
+const findDuplicates = (key, data) => {
+    const countMap = new Map();
+    const duplicates = [];
+
+    // Count occurrences of each value
+    data.forEach(source => {
+        const value = source[key];
+        if (countMap.has(value)) {
+            countMap.get(value).push(source.url);
+        } else {
+            countMap.set(value, [source.url]);
+        }
+    });
+
+    // Collect URLs with duplicate values
+    countMap.forEach(urls => {
+        if (urls.length > 1) {
+            duplicates.push(...urls);
+        }
+    });
+
+    return duplicates;
+}
+
+fs.readFile(FILE_PATH, 'utf8', (err, data) => {
+    if (err) {
+        console.error('Error reading file:', err);
+        return;
+    }
+    const jsonData = JSON.parse(data);
+    const { sources } = jsonData.idina_response;
+    const duplicate_spam_scores = findDuplicates('spam_score', sources);
+    const duplicateDomainAuthorities = findDuplicates('domain_authority', sources);
+
+    const result = { duplicate_spam_scores, duplicateDomainAuthorities };
+    console.log(result);
+});
+
