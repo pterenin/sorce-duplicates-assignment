@@ -1,6 +1,8 @@
-# Getting Started with Blog App
+ # TypeScipt and NODE.js assignment
 
 This is TypeScript version of the find duplication solution. It's implemented unit tests using jest.
+
+# Getting Started
 
 1. Clone the project. 
 2. Run **npm install** to install node modules
