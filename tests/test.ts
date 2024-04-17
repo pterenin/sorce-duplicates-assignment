@@ -1,28 +1,14 @@
-import { validateSources } from '../src/utils';
-import { ApiResponse } from '../src/types';
+import { Source } from '../src/types';
+import findDuplicates from "../src/findDuplicates"
 
-describe('validateSources', () => {
-    it('should return true if all sources have domain authority above the threshold', () => {
-        const mockData: ApiResponse = {
-            idina_response: {
-                sources: [
-                    { url: "example.com", spam_score: 1, domain_authority: 100 },
-                    { url: "foo.com", spam_score: 2, domain_authority: 101 }
-                ]
-            }
-        };
-        expect(validateSources(mockData, 99)).toBe(true);
-    });
-
-    it('should return false if any source has domain authority below the threshold', () => {
-        const mockData: ApiResponse = {
-            idina_response: {
-                sources: [
-                    { url: "example.com", spam_score: 1, domain_authority: 100 },
-                    { url: "bar.com", spam_score: 1, domain_authority: 98 }
-                ]
-            }
-        };
-        expect(validateSources(mockData, 99)).toBe(false);
+describe('findDuplicates', () => {
+    it('returns correct duplicates', () => {
+        const sources: Source[] = [
+            { url: 'http://example.com/a', spam_score: 10, domain_authority: 100 },
+            { url: 'http://example.com/b', spam_score: 20, domain_authority: 100 },
+            { url: 'http://example.com/c', spam_score: 10, domain_authority: 101 }
+        ];
+        expect(findDuplicates('spam_score', sources)).toEqual(['http://example.com/a', 'http://example.com/c']);
+        expect(findDuplicates('domain_authority', sources)).toEqual(['http://example.com/a', 'http://example.com/b']);
     });
 });
